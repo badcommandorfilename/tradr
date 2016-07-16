@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    <div ng-app="tradr" ng-controller="tradecontroller">
+        <table>
+            <tr>
+                <th class="has-text-centered">Symbol</th>
+                <th class="has-text-centered">Name</th>
+                <th class="has-text-centered">Own</th>
+                <th class="has-text-centered">Buy</th>
+                <th class="has-text-centered">Sell</th>
+            </tr>
+
+            <tr ng-repeat="row in symbols">
+                <td>{{row.symbol}}</td>
+                <td>{{row.name}}</td>
+                <td>{{row.own}}</td>
+                <td><div trade-calc amt={{row.amt}} price={{row.buy}} action=buy(row)></div></td>
+                <td><div trade-calc amt={{row.amt}} price={{row.sell}} action=buy(row)></div></td>
+            </tr>
+
+        </table>
+
+        <div class="modal" ng-class="{'is-active': confirm.show}">
+            <div class="modal-background"></div>
+            <div class="modal-container">
+                <div class="modal-content">
+                    <div class="box">
+                        Are you sure you want to buy {{confirm.symbol.amt}} of {{confirm.symbol.name}}?
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close" ng-click="confirm.show=false;"></button>
+        </div>
+    </div>
+}
+@section scripts {
+    <script src="~/js/angular/tradecontroller.js"></script>
+}
