@@ -6,7 +6,6 @@
 
     // add a controller
     app.controller('tradecontroller', function ($scope) {
-        $scope.msg = "hello world";
         $scope.confirm = {
             symbol: null,
             show: false
