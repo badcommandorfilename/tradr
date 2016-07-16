@@ -2,10 +2,10 @@
     'use strict';
 
     var app = angular
-        .module('tradr',[]);
+        .module('tradr', ['ngRoute', 'ngResource']);
 
     // add a controller
-    app.controller('tradecontroller', function ($scope) {
+    app.controller('tradecontroller', ['$scope', '$resource', function($scope, $resource) {
         $scope.confirm = {
             symbol: null,
             show: false
@@ -16,11 +16,13 @@
                 $scope.confirm.show = true;
             }
         }
+        var Symbols = $resource('/api/v0/prices');
         $scope.symbols = [
         { symbol: "goog", name: "Google", own: 10, buy: 4, sell: 2, amt: 4 },
         { symbol: "msft", name: "Microsoft", own: 10, buy: 5, sell: 4, amt: 1 }
         ];
-    });
+        $scope.symbols = Symbols.query();
+    }]);
 
     // add a filter
     app.filter("myUpperFilter", function () {
