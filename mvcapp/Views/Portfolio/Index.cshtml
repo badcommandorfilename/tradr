@@ -1,0 +1,11 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model mvcapp.Models.Portfolio
+@{
+    @if(Model == null)
+    {
+        <p>It looks like you haven't made a portfolio yet! Click <a href="/portfolio/new">here to make one!</a> </p>
+
+    }
+}

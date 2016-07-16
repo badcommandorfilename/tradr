@@ -5,31 +5,30 @@
         .module('tradr', ['ngRoute', 'ngResource']);
 
     // add a controller
-    app.controller('tradecontroller', ['$scope', '$resource', function($scope, $resource) {
+    app.controller('tradecontroller', ['$scope', '$resource', '$http', function($scope, $resource, $http) {
         $scope.confirm = {
             symbol: null,
             show: false
         };
-        $scope.buy = function (symbol) {
-            return function () {
-                $scope.confirm.symbol = symbol;
-                $scope.confirm.show = true;
+        $scope.buy = function (symbol, quantity) {
+            var req = {
+                method: 'POST',
+                url: '/api/v0/stocks/buy',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: { symbol: symbol, quantity: quantity }
             }
+            $http(req).then($scope.refresh);
         }
-        var Symbols = $resource('/api/v0/prices');
-        $scope.symbols = [
-        { symbol: "goog", name: "Google", own: 10, buy: 4, sell: 2, amt: 4 },
-        { symbol: "msft", name: "Microsoft", own: 10, buy: 5, sell: 4, amt: 1 }
-        ];
+
+        var Symbols = $resource('/api/v0/stocks/prices');
+        $scope.refresh = function(){
+            $scope.symbols = Symbols.query();
+        }
         $scope.symbols = Symbols.query();
     }]);
 
-    // add a filter
-    app.filter("myUpperFilter", function () {
-        return function (input) {
-            return input.toUpperCase();
-        }
-    });
 
     app.directive("tradeCalc", function () {
         var t2 = '<p class="control has-addons"> \
@@ -64,13 +63,13 @@
       <td>{{row.symbol}}</td>\
       <td>{{row.name}}</td>\
       <td>{{row.own}}</td>\
-      <td><div trade-calc amt=1 price={{row.buy}} confirm="confirm"></td>\
-      <td><div trade-calc amt=1 price={{row.sell}} confirm="confirm"></td>\
+      <td><div trade-calc amt=1 price={{row.buy}} action=action></td>\
+      <td><div trade-calc amt=1 price={{row.sell}} action=action></td>\
     ';
         return {
             scope: {
                 row: '@',
-                confirm: '='
+                action: '='
             },
             template: tpl
         }

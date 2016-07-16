@@ -1,0 +1,23 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    <h2>Create</h2>
+    @using (Html.BeginForm())
+    {
+        <table>
+            <tr>
+                <th>New Portfolio Name: </th><td>@Html.TextBox("name")</td>
+            </tr>
+            <tr>
+                <th>Starting Balance: </th>
+                <td>@Html.TextBox("balance")</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Create"/></td>
+            </tr>
+        </table>
+
+    }
+}
