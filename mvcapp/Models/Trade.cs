@@ -5,12 +5,17 @@ using System.Threading.Tasks;
 
 namespace mvcapp.Models
 {
-    public struct Trade
+    
+    public class Stock
     {
         public string symbol;
-        public DateTime date;
+        public int quantity; //Sell trades have negative amount, Buy trades have positive
+    }
+
+    public class Trade : Stock
+    {
         public decimal unitPrice;
-        public uint quantity;
+        public DateTime date;
     }
 
     /// <summary>

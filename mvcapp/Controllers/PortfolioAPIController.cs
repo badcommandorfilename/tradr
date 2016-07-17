@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using mvcapp.Services;
 using mvcapp.Models;
+using System.Collections.Generic;
 
 namespace mvcapp.Controllers
 {
@@ -13,11 +14,31 @@ namespace mvcapp.Controllers
         [Route("current")]
         public Portfolio Get()
         {
-            if(CurrentPortfolio.Shared == null)
+            return CurrentPortfolio();
+        }
+
+        [HttpGet]
+        [Route("stocks")]
+        public IEnumerable<Stock> Stocks()
+        {
+            return CurrentPortfolio().OwnedStocks;
+        }
+
+        [HttpGet]
+        [Route("balance")]
+        public decimal Balance()
+        {
+            return CurrentPortfolio().Balance;
+        }
+
+
+        private static Portfolio CurrentPortfolio()
+        {
+            if (Models.CurrentPortfolio.Shared == null)
             {
-                CurrentPortfolio.Shared = new Portfolio("Test", 1000);
+                Models.CurrentPortfolio.Shared = new Portfolio("Test", 1000);
             }
-            return CurrentPortfolio.Shared;
+            return Models.CurrentPortfolio.Shared;
         }
     }
 }
