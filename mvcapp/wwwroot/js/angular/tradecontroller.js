@@ -5,19 +5,33 @@
         .module('tradr', ['ngRoute', 'ngResource']);
 
     // add a controller
-    app.controller('tradecontroller', ['$scope', '$resource', '$http', function($scope, $resource, $http) {
+    app.controller('tradecontroller', ['$scope', '$resource', '$q', function($scope, $resource, $q) {
         $scope.confirm = {
             symbol: null,
             show: false
         };
 
+        var Stocks = $resource('/api/v0/portfolio/stocks');
         var Symbols = $resource('/api/v0/stocks/prices');
-        $scope.refresh = function(){
-            Symbols.query({},function(symbols){
-                $scope.symbols = symbols.map(function(x){ 
 
-                    return x;
-                });
+        $scope.refresh = function () {
+
+            $q.all([Stocks.query({}).$promise, Symbols.query({}).$promise])
+                .then(function (values) {
+                    var stocks = values[0];
+                    var symbols = values[1];
+                    $scope.stocks = stocks;
+                    for (var i = 0; i < symbols.length; i++){
+                        symbols[i].own = 0
+                        for (var j = 0; j < $scope.stocks.length; j++)
+                        {
+                            if ($scope.stocks[j].symbol === symbols[i].symbol) {
+                                symbols[i].own = $scope.stocks[j].quantity;
+                                break;
+                            }
+                        }
+                    }
+                    $scope.symbols = symbols;
             })
         }
         $scope.refresh();

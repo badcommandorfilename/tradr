@@ -37,7 +37,7 @@ namespace mvcapp.Controllers
             string symbol = input.symbol;
             var currentquote = quotes.GetQuote(symbol);
             uint quantity = (uint)input.quantity;
-            return CurrentPortfolio.Shared.Buy(currentquote, quantity);
+            return PortfolioAPIController.CurrentPortfolio().Buy(currentquote, quantity);
 
         }
     }

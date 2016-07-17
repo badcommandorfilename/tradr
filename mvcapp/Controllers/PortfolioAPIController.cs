@@ -32,7 +32,7 @@ namespace mvcapp.Controllers
         }
 
 
-        private static Portfolio CurrentPortfolio()
+        public static Portfolio CurrentPortfolio()
         {
             if (Models.CurrentPortfolio.Shared == null)
             {

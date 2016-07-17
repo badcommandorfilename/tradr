@@ -17,7 +17,7 @@ namespace mvcapp.Controllers
         [Route("index")]
         public IActionResult Index()
         {
-            return View();
+            return View(PortfolioAPIController.CurrentPortfolio());
         }
     }
 }
