@@ -1,28 +1,32 @@
 ﻿@model mvcapp.Models.Portfolio
 @{
-    <div >
-        Balance: @Model.Balance
-    </div>
+
 
     <div ng-app="tradr" ng-controller="tradecontroller">
-        <table>
-            <tr>
-                <th class="has-text-centered">Symbol</th>
-                <th class="has-text-centered">Name</th>
-                <th class="has-text-centered">Own</th>
-                <th class="has-text-centered">Buy</th>
-                <th class="has-text-centered">Sell</th>
-            </tr>
+        <div>
+            Balance: {{portfolio.balance}} (<a href="/api/v0/portfolio/reset">reset</a>)
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <th class="has-text-centered">Symbol</th>
+                    <th class="has-text-centered">Name</th>
+                    <th class="has-text-centered">Own</th>
+                    <th class="has-text-centered">Buy</th>
+                    <th class="has-text-centered">Sell</th>
+                </tr>
 
-            <tr ng-repeat="row in symbols">
-                <td>{{row.symbol}}</td>
-                <td>{{row.name}}</td>
-                <td>{{row.own}}</td>
-                <td><div trade-calc amt={{row.amt}} price={{row.buy}} action="buy" sym={{row.symbol}}></div></td>
-                <td><div trade-calc amt={{row.amt}} price={{row.sell}} action="sell" sym={{row.symbol}}></div></td>
-            </tr>
+                <tr ng-repeat="row in symbols">
+                    <td>{{row.symbol}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.own}}</td>
+                    <td><div trade-calc amt={{row.amt}} price={{row.buy}} action="buy" sym={{row.symbol}} reload="refresh"></div></td>
+                    <td><div trade-calc amt={{row.amt}} price={{row.sell}} action="sell" sym={{row.symbol}} reload="refresh"></div></td>
+                </tr>
 
-        </table>
+            </table>
+        </div>
+
 
         <div class="modal" ng-class="{'is-active': confirm.show}">
             <div class="modal-background"></div>

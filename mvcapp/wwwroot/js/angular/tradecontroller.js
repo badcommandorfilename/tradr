@@ -5,16 +5,20 @@
         .module('tradr', ['ngRoute', 'ngResource']);
 
     // add a controller
-    app.controller('tradecontroller', ['$scope', '$resource', '$q', function($scope, $resource, $q) {
-        $scope.confirm = {
-            symbol: null,
-            show: false
-        };
+    app.controller('tradecontroller', ['$scope', '$resource', '$q', '$http', function($scope, $resource, $q, $http) {
 
         var Stocks = $resource('/api/v0/portfolio/stocks');
         var Symbols = $resource('/api/v0/stocks/prices');
+        $scope.portfolio = { balance: 0 };
 
         $scope.refresh = function () {
+            $http({
+                method: 'GET',
+                url: '/api/v0/portfolio/balance'
+            }).then(function (response) {
+                $scope.portfolio.balance = response.data;
+            });
+            
 
             $q.all([Stocks.query({}).$promise, Symbols.query({}).$promise])
                 .then(function (values) {
@@ -35,10 +39,11 @@
             })
         }
         $scope.refresh();
+
     }]);
 
 
-    app.directive("tradeCalc", ['$http', function($http) {
+    app.directive("tradeCalc", ['$http', '$route', function($http, $route) {
         var t2 = '<p class="control has-addons"> \
   <input data-ng-model=amt ng-value=amt string-to-number type="number" class="input" size="2" min="0" style="width:50px"> \
   <a class="button is-danger" style="width:190px" data-ng-click=callaction()> @ ${{price}} for ${{(amt*price)}}</a>'
@@ -46,24 +51,28 @@
             scope: {
                 amt: '@',
                 price: '@',
-                sym: '@'
+                sym: '@',
+                action: '@',
+                reload: '='
             },
             template: t2,
             link: function (scope, elm, attrs) {
-                var buy = function (symbol, quantity) {
+                var buy = function (symbol, quantity, action) {
                         var req = {
                             method: 'POST',
-                            url: '/api/v0/stocks/buy',
+                            url: '/api/v0/stocks/'+ action,
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             data: { symbol: symbol, quantity: quantity }
                         }
-                        $http(req);
+                        $http(req).then(function () {
+                            scope.reload();
+                        });
                     }
 
                 scope.callaction = function() {
-                    buy(scope.sym, scope.amt);
+                    buy(scope.sym, scope.amt, scope.action);
                 }
             }
         }

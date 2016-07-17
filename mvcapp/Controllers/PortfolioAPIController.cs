@@ -31,6 +31,15 @@ namespace mvcapp.Controllers
             return CurrentPortfolio().Balance;
         }
 
+        [HttpGet]
+        [Route("reset")]
+        public Portfolio Reset()
+        {
+            Models.CurrentPortfolio.Shared = new Portfolio("Test", 1000);
+            return Models.CurrentPortfolio.Shared;
+        }
+
+
 
         public static Portfolio CurrentPortfolio()
         {

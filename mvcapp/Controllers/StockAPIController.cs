@@ -40,5 +40,20 @@ namespace mvcapp.Controllers
             return PortfolioAPIController.CurrentPortfolio().Buy(currentquote, quantity);
 
         }
+
+        [HttpPost]
+        [Route("sell")]
+        public dynamic Sell()
+        {
+            var req = Request.Body;
+            string json = new StreamReader(req).ReadToEnd();
+
+            dynamic input = JsonConvert.DeserializeObject(json);
+            string symbol = input.symbol;
+            var currentquote = quotes.GetQuote(symbol);
+            uint quantity = (uint)input.quantity;
+            return PortfolioAPIController.CurrentPortfolio().Sell(currentquote, quantity);
+
+        }
     }
 }
