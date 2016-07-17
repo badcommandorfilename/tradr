@@ -20,7 +20,7 @@ namespace mvcapp.Services
         public Quote GetQuote(string symbol)
         {
             var stockCode = yahooFinance.GetYahooStockCode(Exchange, symbol);
-            var history = yahooFinance.GetDailyHistoricalPriceData(stockCode, DateTime.Now, DateTime.Now - TimeSpan.FromDays(1));
+            var history = yahooFinance.GetDailyHistoricalPriceData(stockCode, DateTime.Now, DateTime.Now - TimeSpan.FromDays(30));
 
             var data = from p 
                        in history

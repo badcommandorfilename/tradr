@@ -16,8 +16,8 @@
                 <td>{{row.symbol}}</td>
                 <td>{{row.name}}</td>
                 <td>{{row.own}}</td>
-                <td><div trade-calc amt={{row.amt}} price={{row.buy}} action="buy(row)()"></div></td>
-                <td><div trade-calc amt={{row.amt}} price={{row.sell}} action="buy(row)()"></div></td>
+                <td><div trade-calc amt={{row.amt}} price={{row.buy}} action="buy" sym={{row.symbol}}></div></td>
+                <td><div trade-calc amt={{row.amt}} price={{row.sell}} action="sell" sym={{row.symbol}}></div></td>
             </tr>
 
         </table>

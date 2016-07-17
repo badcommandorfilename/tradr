@@ -10,39 +10,50 @@
             symbol: null,
             show: false
         };
-        $scope.buy = function (symbol, quantity) {
-            var req = {
-                method: 'POST',
-                url: '/api/v0/stocks/buy',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: { symbol: symbol, quantity: quantity }
-            }
-            $http(req).then($scope.refresh);
-        }
 
         var Symbols = $resource('/api/v0/stocks/prices');
         $scope.refresh = function(){
-            $scope.symbols = Symbols.query();
+            Symbols.query({},function(symbols){
+                $scope.symbols = symbols.map(function(x){ 
+
+                    return x;
+                });
+            })
         }
-        $scope.symbols = Symbols.query();
+        $scope.refresh();
     }]);
 
 
-    app.directive("tradeCalc", function () {
+    app.directive("tradeCalc", ['$http', function($http) {
         var t2 = '<p class="control has-addons"> \
   <input data-ng-model=amt ng-value=amt string-to-number type="number" class="input" size="2" min="0" style="width:50px"> \
-  <a class="button is-danger" style="width:190px" ng-click=action> @ ${{price}} for ${{(amt*price)}} </a>'
+  <a class="button is-danger" style="width:190px" data-ng-click=callaction()> @ ${{price}} for ${{(amt*price)}}</a>'
         return {
             scope: {
                 amt: '@',
                 price: '@',
-                action: '&'
+                sym: '@'
             },
-            template: t2
+            template: t2,
+            link: function (scope, elm, attrs) {
+                var buy = function (symbol, quantity) {
+                        var req = {
+                            method: 'POST',
+                            url: '/api/v0/stocks/buy',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            data: { symbol: symbol, quantity: quantity }
+                        }
+                        $http(req);
+                    }
+
+                scope.callaction = function() {
+                    buy(scope.sym, scope.amt);
+                }
+            }
         }
-    });
+    }]);
 
     app.directive('stringToNumber', function () {
         return {
@@ -52,25 +63,12 @@
                     return '' + value;
                 });
                 ngModel.$formatters.push(function (value) {
-                    return parseFloat(value, 10);
+                    try {
+                        return parseFloat(value, 10);
+                    } catch (err) {
+                        return 1;
+                    }
                 });
             }
         };
-    });
-
-    app.directive("symbolRow", function () {
-        var tpl = '\
-      <td>{{row.symbol}}</td>\
-      <td>{{row.name}}</td>\
-      <td>{{row.own}}</td>\
-      <td><div trade-calc amt=1 price={{row.buy}} action=action></td>\
-      <td><div trade-calc amt=1 price={{row.sell}} action=action></td>\
-    ';
-        return {
-            scope: {
-                row: '@',
-                action: '='
-            },
-            template: tpl
-        }
     });

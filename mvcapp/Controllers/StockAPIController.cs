@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using mvcapp.Services;
 using mvcapp.Models;
+using System.IO;
+using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace mvcapp.Controllers
 {
@@ -16,7 +19,7 @@ namespace mvcapp.Controllers
         [Route("prices")]
         public IEnumerable<dynamic> Get()
         {
-            var symbols = new[] { "PRU", "GFY" };
+            var symbols = new[] { "ANZ", "BXB", "CBA", "BHP", "PRU", "GFY" };
             foreach(var quote in symbols.Select(s => quotes.GetQuote(s)))
             {
                 yield return quote;
@@ -25,11 +28,17 @@ namespace mvcapp.Controllers
 
         [HttpPost]
         [Route("buy")]
-        public dynamic Buy(string symbol, uint quantity)
+        public dynamic Buy()
         {
-            var currentquote = quotes.GetQuote(symbol);
+            var req = Request.Body;
+            string json = new StreamReader(req).ReadToEnd();
 
+            dynamic input = JsonConvert.DeserializeObject(json);
+            string symbol = input.symbol;
+            var currentquote = quotes.GetQuote(symbol);
+            uint quantity = (uint)input.quantity;
             return CurrentPortfolio.Shared.Buy(currentquote, quantity);
+
         }
     }
 }
